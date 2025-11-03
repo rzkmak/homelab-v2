@@ -1,0 +1,11 @@
+# General ignores for macOS, IDEs, and environment files
+.idea
+.vscode
+.DS_Store
+.env
+
+# Temporary files for AI assistance
+pub-sealed-secrets.pem
+temporary.md
+argocd-ssh-key
+argocd-ssh-key.pub
