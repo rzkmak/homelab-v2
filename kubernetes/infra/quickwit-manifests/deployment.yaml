@@ -15,35 +15,6 @@ spec:
       labels:
         app: quickwit
     spec:
-      initContainers:
-        - name: init-quickwit
-          image: quickwit/quickwit:0.8.1
-          command:
-            - /bin/sh
-            - -c
-            - |
-              set -e
-              echo "Initializing Quickwit..."
-
-              # Create index if it doesn't exist
-              if [ ! -f ${QW_DATA_DIR}/indexes/logs ]; then
-                echo "Creating logs index..."
-                quickwit index create --index-config /quickwit/config/index-config.yaml
-              else
-                echo "Logs index already exists"
-              fi
-          env:
-            - name: QW_DATA_DIR
-              value: /quickwit/data
-            - name: QW_NODE_ID
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-          volumeMounts:
-            - name: data
-              mountPath: /quickwit/data
-            - name: config
-              mountPath: /quickwit/config
       containers:
         - name: quickwit
           image: quickwit/quickwit:0.8.1
