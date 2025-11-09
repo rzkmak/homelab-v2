@@ -69,9 +69,12 @@ spec:
                 - kubernetes_metadata
               uri: http://quickwit-searcher.monitoring.svc.cluster.local:7280/api/v1/logs/ingest
               encoding:
-                codec: ndjson  # Newline-delimited JSON format required by Quickwit
+                codec: json  # Single JSON object per event
+              framing:
+                method: newline_delimited  # Separate events with newlines
+              compression: none
               batch:
-                max_bytes: 1048576
+                max_events: 100
                 timeout_secs: 5
               request:
                 headers:
