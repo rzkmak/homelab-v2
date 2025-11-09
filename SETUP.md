@@ -345,8 +345,6 @@ make setup-passwordless-sudo   # Configure passwordless sudo on remote server
 make setup-kubeconfig          # Fetch kubeconfig from remote server
 make check-connection          # Test cluster connectivity
 make bootstrap                 # Install ArgoCD and deploy all apps
-make check-apps                # Check status of all applications
-make wait-for-apps             # Watch applications sync (interactive)
 make status                    # Check ArgoCD application status
 make dashboard                 # Access ArgoCD dashboard
 make grafana                   # Access Grafana dashboard

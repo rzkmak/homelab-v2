@@ -12,13 +12,14 @@ data:
       - name: Quickwit
         type: elasticsearch
         access: proxy
-        url: http://quickwit-searcher.monitoring.svc.cluster.local:7280/api/v1
+        url: http://quickwit-searcher.monitoring.svc.cluster.local:7280/api/v1/logs
         jsonData:
           timeField: timestamp
           esVersion: "7.10.0"
           interval: Daily
           logMessageField: message
           logLevelField: level
+          database: logs
         editable: true
 ---
 # Note: Quickwit provides an Elasticsearch-compatible API for queries
