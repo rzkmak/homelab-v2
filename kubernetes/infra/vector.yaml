@@ -1,0 +1,108 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vector
+  namespace: argocd
+spec:
+  project: default
+  source:
+    chart: vector
+    repoURL: https://helm.vector.dev
+    targetRevision: 0.35.0
+    helm:
+      releaseName: vector
+      values: |
+        role: Agent
+
+        # Run as DaemonSet to collect logs from all nodes
+        replicas: null
+
+        # Vector configuration
+        customConfig:
+          data_dir: /vector-data-dir
+
+          api:
+            enabled: true
+            address: 0.0.0.0:8686
+
+          # Source: Collect logs from Kubernetes
+          sources:
+            kubernetes_logs:
+              type: kubernetes_logs
+              auto_partial_merge: true
+              ignore_older_secs: 600
+
+          # Transform: Parse and enrich logs
+          transforms:
+            kubernetes_metadata:
+              type: remap
+              inputs:
+                - kubernetes_logs
+              source: |
+                # Parse container runtime logs (CRI format)
+                .message = string!(.message)
+
+                # Add cluster metadata
+                .cluster = "homelab"
+
+                # Extract namespace, pod, container from kubernetes metadata
+                if exists(.kubernetes) {
+                  .namespace = del(.kubernetes.pod_namespace)
+                  .pod_name = del(.kubernetes.pod_name)
+                  .container_name = del(.kubernetes.container_name)
+                  .node_name = del(.kubernetes.pod_node_name)
+                }
+
+          # Sink: Send logs to Quickwit
+          sinks:
+            quickwit:
+              type: http
+              inputs:
+                - kubernetes_metadata
+              uri: http://quickwit-searcher.monitoring.svc.cluster.local:7280/api/v1/logs/ingest
+              encoding:
+                codec: json
+              batch:
+                max_bytes: 1048576
+                timeout_secs: 5
+              request:
+                headers:
+                  Content-Type: application/json
+              buffer:
+                type: disk
+                max_size: 268435488  # 256MB
+
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            memory: 512Mi
+
+        # Tolerations to run on all nodes
+        tolerations:
+          - effect: NoSchedule
+            operator: Exists
+
+        # Service for Vector API
+        service:
+          enabled: true
+          type: ClusterIP
+          ports:
+            - name: api
+              port: 8686
+              protocol: TCP
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 5s
+        maxDuration: 3m

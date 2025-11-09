@@ -1,0 +1,72 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gitea
+  namespace: argocd
+spec:
+  project: default
+  source:
+    chart: gitea
+    repoURL: https://dl.gitea.com/charts/
+    targetRevision: 10.1.0
+    helm:
+      releaseName: gitea
+      values: |
+        gitea:
+          # Admin credentials will be configured on first login via web UI
+          # No default admin user is created for security
+          # Visit http://gitea.homelab.local on first access to create admin account
+
+          config:
+            server:
+              DOMAIN: gitea.homelab.local
+              ROOT_URL: http://gitea.homelab.local
+              SSH_DOMAIN: gitea.homelab.local
+              SSH_PORT: 22
+              SSH_LISTEN_PORT: 2222
+            database:
+              DB_TYPE: sqlite3
+            session:
+              PROVIDER: memory
+            cache:
+              ADAPTER: memory
+            queue:
+              TYPE: level
+
+        persistence:
+          enabled: true
+          size: 10Gi
+
+        ingress:
+          enabled: true
+          className: traefik
+          hosts:
+            - host: gitea.homelab.local
+              paths:
+                - path: /
+                  pathType: Prefix
+
+        postgresql:
+          enabled: false
+
+        redis:
+          enabled: false
+
+        service:
+          ssh:
+            type: LoadBalancer
+            port: 22
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: gitea
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 5s
+        maxDuration: 3m

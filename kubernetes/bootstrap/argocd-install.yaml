@@ -1,0 +1,12 @@
+---
+# ArgoCD Installation
+# This file references the official ArgoCD installation manifest
+# Apply this after creating the namespace
+#
+# To install ArgoCD, run:
+# kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+#
+# Or use the HA version:
+# kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/ha/install.yaml
+#
+# For this homelab setup, we'll use the standard (non-HA) installation.

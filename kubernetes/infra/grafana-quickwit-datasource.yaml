@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-quickwit-datasource
+  namespace: monitoring
+  labels:
+    grafana_datasource: "1"
+data:
+  quickwit-datasource.yaml: |-
+    apiVersion: 1
+    datasources:
+      - name: Quickwit
+        type: elasticsearch
+        access: proxy
+        url: http://quickwit-searcher.monitoring.svc.cluster.local:7280/api/v1
+        jsonData:
+          timeField: timestamp
+          esVersion: "7.10.0"
+          interval: Daily
+          logMessageField: message
+          logLevelField: level
+        editable: true
+---
+# Note: Quickwit provides an Elasticsearch-compatible API for queries
+# This datasource configuration uses Grafana's Elasticsearch plugin
+# to query Quickwit logs.
+#
+# Alternative: You can also use Grafana's JSON API datasource or Infinity datasource
+# for more flexibility with Quickwit's native REST API.
+#
+# To query logs in Grafana:
+# 1. Use Explore view
+# 2. Select "Quickwit" datasource
+# 3. Use Lucene query syntax (e.g., namespace:monitoring AND level:error)
+# 4. Time range will be automatically applied using the timestamp field

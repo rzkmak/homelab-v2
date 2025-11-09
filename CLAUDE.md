@@ -1,0 +1,3 @@
+- I would like to make this repository as public, so any secret should be using sealed secret or temporary secret if needed
+- Kube version v1.28.5+k3s1 (Kubernetes 1.28.5)
+- Create all blueprint before execute something

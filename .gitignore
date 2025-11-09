@@ -4,6 +4,21 @@
 .DS_Store
 .env
 
+# Secrets - IMPORTANT: Never commit plain secrets!
+# Only sealed secrets (*-sealed.yaml) should be committed
+kubernetes/secrets/*.yaml
+!kubernetes/secrets/*-sealed.yaml
+!kubernetes/secrets/templates/*.template
+!kubernetes/secrets/README.md
+
+# Temporary secret files
+/tmp/*-secret.yaml
+*.secret.yaml
+*-credentials.yaml
+
+# Sealed secrets private keys (only public cert can be committed)
+sealed-secrets-key-backup.yaml
+
 # Temporary files for AI assistance
 pub-sealed-secrets.pem
 temporary.md
