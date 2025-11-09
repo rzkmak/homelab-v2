@@ -3,7 +3,7 @@ K3S_SERVER := rizki@192.168.0.210
 K3S_IP := 192.168.0.210
 KUBECONFIG_PATH := ~/.kube/k3s-config
 
-.PHONY: help bootstrap install-argocd apply-root status dashboard password grafana quickwit clean setup-kubeconfig setup-passwordless-sudo ssh-server check-connection check-apps wait-for-apps
+.PHONY: help bootstrap install-argocd apply-root status dashboard password grafana quickwit gitea clean setup-kubeconfig setup-passwordless-sudo ssh-server check-connection check-apps wait-for-apps
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
@@ -53,6 +53,11 @@ quickwit: ## Port-forward to Quickwit UI (http://localhost:7280)
 	@echo "Access Quickwit at http://localhost:7280"
 	@echo "Index: logs"
 	kubectl port-forward -n monitoring svc/quickwit-searcher 7280:7280
+
+gitea: ## Port-forward to Gitea (http://localhost:3001)
+	@echo "Access Gitea at http://localhost:3001"
+	@echo "First time: Complete installation wizard and create admin account"
+	kubectl port-forward -n gitea svc/gitea-http 3001:3000
 
 clean: ## Remove ArgoCD and all managed resources
 	@echo "Warning: This will delete ArgoCD and all managed applications!"
