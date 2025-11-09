@@ -3,7 +3,7 @@ K3S_SERVER := rizki@192.168.0.210
 K3S_IP := 192.168.0.210
 KUBECONFIG_PATH := ~/.kube/k3s-config
 
-.PHONY: help bootstrap install-argocd apply-root status dashboard password clean setup-kubeconfig setup-passwordless-sudo ssh-server check-connection check-apps wait-for-apps
+.PHONY: help bootstrap install-argocd apply-root status dashboard password grafana quickwit clean setup-kubeconfig setup-passwordless-sudo ssh-server check-connection check-apps wait-for-apps
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
@@ -46,8 +46,13 @@ dashboard: ## Port-forward to ArgoCD dashboard (https://localhost:8080)
 grafana: ## Port-forward to Grafana dashboard (http://localhost:3000)
 	@echo "Access Grafana at http://localhost:3000"
 	@echo "Username: admin"
-	@echo "Password: admin (change in kubernetes/infra/kube-prometheus-stack.yaml)"
+	@echo "Password: (your configured password)"
 	kubectl port-forward -n monitoring svc/kube-prometheus-stack-grafana 3000:80
+
+quickwit: ## Port-forward to Quickwit UI (http://localhost:7280)
+	@echo "Access Quickwit at http://localhost:7280"
+	@echo "Index: logs"
+	kubectl port-forward -n monitoring svc/quickwit-searcher 7280:7280
 
 clean: ## Remove ArgoCD and all managed resources
 	@echo "Warning: This will delete ArgoCD and all managed applications!"

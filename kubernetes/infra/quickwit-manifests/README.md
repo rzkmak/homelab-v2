@@ -66,8 +66,10 @@ open http://localhost:7280
 
 ### Querying Logs
 
-**From Quickwit UI:**
-1. Navigate to the Quickwit UI
+**IMPORTANT:** Quickwit uses its own UI and API for querying logs. It does not integrate directly with Grafana's Explore view because Quickwit's Elasticsearch compatibility is limited and doesn't support all Elasticsearch APIs that Grafana requires.
+
+**From Quickwit Web UI (Recommended):**
+1. Access Quickwit UI (see access methods below)
 2. Select the "logs" index
 3. Use Lucene query syntax:
    ```
@@ -75,14 +77,9 @@ open http://localhost:7280
    pod_name:quickwit* AND message:failed
    container_name:vector AND timestamp:[now-1h TO now]
    ```
+4. Use the built-in time range picker
 
-**From Grafana:**
-1. Go to Explore view
-2. Select "Quickwit" datasource
-3. Use Lucene query syntax
-4. Set time range
-
-**Via API:**
+**Via API (for automation/scripts):**
 ```bash
 # Search logs
 curl -X POST "http://quickwit-searcher.monitoring.svc.cluster.local:7280/api/v1/logs/search" \

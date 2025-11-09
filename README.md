@@ -126,9 +126,11 @@ kubernetes/
 
 ### Observability
 - **Prometheus** - Metrics collection and alerting
-- **Grafana** - Visualization and dashboards
-- **Quickwit** - Cloud-native search engine for logs
+- **Grafana** - Metrics visualization and dashboards (Prometheus data)
+- **Quickwit** - Cloud-native search engine for logs (separate UI)
 - **Vector** - High-performance observability data pipeline
+
+**Note:** Grafana is used for **metrics** (Prometheus), while Quickwit has its own UI for **logs**.
 
 ### Access URLs
 
