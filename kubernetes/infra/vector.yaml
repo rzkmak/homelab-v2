@@ -42,6 +42,9 @@ spec:
                 # Parse container runtime logs (CRI format)
                 .message = string!(.message)
 
+                # Add timestamp in RFC3339 format (required by Quickwit)
+                .timestamp = format_timestamp!(.timestamp, format: "%+")
+
                 # Add cluster metadata
                 .cluster = "homelab"
 
@@ -53,6 +56,11 @@ spec:
                   .node_name = del(.kubernetes.pod_node_name)
                 }
 
+                # Add log level if not present
+                if !exists(.level) {
+                  .level = "info"
+                }
+
           # Sink: Send logs to Quickwit
           sinks:
             quickwit:
@@ -61,7 +69,7 @@ spec:
                 - kubernetes_metadata
               uri: http://quickwit-searcher.monitoring.svc.cluster.local:7280/api/v1/logs/ingest
               encoding:
-                codec: json
+                codec: ndjson  # Newline-delimited JSON format required by Quickwit
               batch:
                 max_bytes: 1048576
                 timeout_secs: 5
