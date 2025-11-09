@@ -46,7 +46,11 @@ spec:
                 - path: /
                   pathType: Prefix
 
+        # Disable PostgreSQL - using SQLite for simplicity
         postgresql:
+          enabled: false
+
+        postgresql-ha:
           enabled: false
 
         redis:
