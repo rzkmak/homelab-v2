@@ -53,7 +53,11 @@ spec:
         postgresql-ha:
           enabled: false
 
+        # Disable all Redis components - using in-memory cache
         redis:
+          enabled: false
+
+        redis-cluster:
           enabled: false
 
         service:
